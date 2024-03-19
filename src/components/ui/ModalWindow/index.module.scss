@@ -1,0 +1,90 @@
+@import '../../../assets/mixins/responsive_font.scss';
+
+.fade {
+    position: fixed;
+    inset: 0;
+    z-index: 99999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100vh;
+    background: rgba(17, 17, 17, 0.7);
+    overflow-y: hidden;
+    transition: all .3s ease-in;
+}
+
+.modalWindow {
+    position: relative;
+    opacity: 0;
+
+    width: auto;
+    max-width: max-content;
+    height: min-content;
+
+    border-radius: 10px;
+    background: var(--bg);
+    transition: all .4s ease-in-out;
+
+    &.modalAnimate {
+        opacity: 1;
+    }
+
+    @media (max-width: 525px) {
+        padding-top: 60px;
+        min-width: 100%;
+        max-width: 100%;
+        height: 100vh;
+        max-height: 100vh;
+        border-radius: 0;
+    }
+}
+
+.header {
+    position: relative;
+    padding: 1rem 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-shrink: 0;
+
+    h2.title {
+        @include responsive_font(18, 14);
+        font-family: 'Lato600';
+        color: var(--color);
+    }
+
+    .closeButton {
+        position: absolute;
+        top: 50%;
+        right: 0.81rem;
+        transform: translateY(-50%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: transparent;
+        color: var(--color);
+        border: 2px solid var(--accent);
+        border-radius: 4px;
+
+        transition: all .4s ease-in-out;
+        cursor: pointer;
+
+        @media (min-width:1095px) {
+            &:hover {
+                transition: all .4s ease-in-out;
+                color: var(--red);
+            }
+        }
+    }
+}
+
+.content {
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.5rem;
+
+    // scroll 
+}

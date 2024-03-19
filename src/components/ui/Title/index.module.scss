@@ -1,0 +1,48 @@
+@import '../../../assets/mixins/responsive_font.scss';
+
+.mainTitle,
+.title,
+.subTitle,
+.header,
+.topic,
+.subject {
+    display: inline-block;
+    width: 100%;
+    font-style: normal;
+    line-height: normal;
+    color: var(--color);
+
+    &[data-align='left'] {
+        text-align: left;
+    }
+    &[data-align='right'] {
+        text-align: right;
+    }
+    &[data-align='center'] {
+        text-align: center;
+    }
+
+    @media (max-width: 940px) {
+        text-align: left !important;
+    }
+}
+
+.mainTitle {
+    @include responsive_font(38, 24);
+    font-weight: 900;
+}
+
+.title {
+    padding-left: 10px;
+    @include responsive_font(22, 22);
+    font-weight: 900;
+}
+
+.subTitle {
+    font-weight: 900;
+    @include responsive_font(18, 18);
+}
+
+.title[data-no-padding] {
+    padding: 0;
+}

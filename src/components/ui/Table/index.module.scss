@@ -1,0 +1,261 @@
+@import '../../../assets/mixins/responsive_font.scss';
+
+.tableContainer {
+    position: relative;
+    margin: 0 auto;
+    width: 100%;
+}
+
+.shrinkButton {
+    position: absolute;
+    top: -15px;
+    left: -15px;
+    z-index: 9;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 45px;
+    height: 45px;
+    background-color: var(--color);
+    border-radius: 50%;
+    color: var(--accent);
+
+    svg {
+        transition: all .2s ease-in-out;
+    }
+
+    cursor: pointer;
+
+    &:hover {
+        svg {
+            transform: scale(1.1);
+        }
+    }
+}
+
+
+.tableWrapper {
+    overflow-x: auto;
+    white-space: nowrap;
+}
+
+.table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.thead {
+    border-radius: 15px;
+    background-color: var(--frame-color);
+}
+
+.theadCell {
+    padding: 10px;
+    cursor: pointer;
+
+    .line {
+        margin: 0 auto;
+        display: flex;
+        align-items: center;
+        min-width: 90px;
+        user-select: none;
+    }
+
+    span {
+        margin: auto 0;
+        width: 100%;
+        font-weight: 500;
+        @include responsive_font(18, 11);
+        line-height: 1.5;
+        color: #fff;
+        user-select: none;
+    }
+
+    .icon {
+        right: 0;
+        display: flex;
+        align-items: center;
+        display: none;
+
+        svg {
+            transition: all .2s ease-in;
+        }
+    }
+
+    &:hover {
+        .icon {
+            display: flex;
+        }
+        .icon svg {
+            transition: all .1s ease-out;
+        }
+    }
+
+    .icon.iconRot svg {
+        transform: rotate(180deg);
+    }
+
+    &:nth-last-child(-n+2) {
+        cursor: auto;
+
+        .icon {
+            display: none;
+        }
+    }
+}
+
+
+.tableRow {
+    border-bottom: 1px solid var(--frame-color);
+}
+
+
+.tbodyCell {
+    padding: 20px 12px;
+    margin: 0 auto;
+    max-width: 250px;
+    overflow: hidden;
+    text-align: center;
+    text-overflow: ellipsis;
+
+    .tbodyCell {
+        font-family: 'Poppins-Medium', sans-serif;
+        @include responsive_font(18, 10);
+        font-weight: 500;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--color);
+        transition: all .3s ease-in;
+
+        &:hover {
+            background-color: var(--new);
+        }
+    }
+
+    b {
+        &[data-active=false] {
+            color: var(--red);
+        }
+    }
+
+    &[data-red] {
+        svg {
+            transition: all .3s ease-in;
+            color: var(--red);
+        }
+        &:hover {
+            svg {
+                color: var(--red-op);
+            }
+            cursor: pointer;
+        }
+    }
+
+    &[data-green] {
+        svg {
+            transition: all .3s ease-in;
+            color: var(--green);
+        }
+        &:hover {
+            svg {
+                color: var(--green-op);
+            }
+            cursor: pointer;
+        }
+    }
+}
+
+
+
+.emptyCell {
+    padding: 20px 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    @include responsive_font(20, 12);
+    font-weight: 600;
+    text-align: center;
+    color: var(--grey_text);
+    user-select: none;
+}
+
+
+@media (max-width:697px) {
+    .tableWrapper {
+        padding: 0 0 10px;
+    }
+
+    .table {
+        display: block;
+        width: 100%;
+    }
+
+
+    .table .thead,
+    .table .tbody,
+    .table .thead .theadCell {
+        display: block;
+    }
+
+    .table .thead {
+        float: left;
+        border-radius: 0px;
+
+        .line {
+            flex-direction: row-reverse;
+            justify-content: flex-start !important;
+        }
+    }
+
+    .table .tbody {
+        overflow-x: auto;
+    }
+
+    .tableRow {
+        display: table-cell;
+        border-right: 1px solid var(--frame-color);
+        border-bottom: none;
+
+        &:last-child {
+            border-right: none;
+        }
+    }
+
+    .table .tbodyCell {
+        display: block;
+        border: 1px solid var(--frame-color);
+    }
+
+    .table .thead .theadCell,
+    .table .tbody .tbodyCell {
+        padding: 12px 8px;
+        width: 160px;
+        font-size: 12px;
+        text-align: left;
+    }
+
+    .table .tbody .tbodyCell {
+        min-height: 45px;
+        text-align: center !important;
+        border-bottom: 1px solid var(---new);
+    }
+}
+
+
+
+
+.table.shrink {
+    .thead .theadCell {
+        @include responsive_font(14, 10);
+    }
+
+    .theadCell,
+    .tbodyCell {
+        padding: 2px 5px;
+        min-height: 39px;
+        font-size: 12px;
+    }
+}

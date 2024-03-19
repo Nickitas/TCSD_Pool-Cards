@@ -1,0 +1,14 @@
+
+
+.deliteConfirmModal {
+    min-width: 360px;
+
+    p {
+        max-width: 340px;
+    }
+
+    @media (max-width: 525px) {
+        width: 100%;
+        min-width: 100%;
+    }
+}

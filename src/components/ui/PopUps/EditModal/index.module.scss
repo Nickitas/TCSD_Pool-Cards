@@ -1,0 +1,9 @@
+
+.editModal {
+    min-width: 360px;
+
+    @media (max-width: 525px) {
+        width: 100%;
+        min-width: 100%;
+    }
+}

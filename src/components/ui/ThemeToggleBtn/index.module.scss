@@ -1,0 +1,23 @@
+.theme_toggle_btn {
+    display: flex;
+    align-items: center;
+    justify-content: baseline;
+    border-radius: 8px;
+    border: 1px solid transparent;
+    padding: 6px;
+    font-size: 1em;
+    font-weight: 500;
+    color: #fff;
+    font-family: inherit;
+    background-color: var(--frame-color);
+
+    cursor: pointer;
+    transition: border-color 0.25s;
+    &:hover {
+        border-color: var(--accent);
+    }
+    &:focus,
+    &:focus-visible {
+        outline: 4px auto -webkit-focus-ring-color;
+    }
+}

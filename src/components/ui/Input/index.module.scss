@@ -1,0 +1,100 @@
+@import '../../../assets/mixins/responsive_font.scss';
+
+.inputWrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+
+    div.input {
+        position: relative;
+        display: flex;
+        height: 40px;
+        border: 2px solid var(--accent);
+        border-radius: 12px;
+        transition: all .25s ease;
+
+        .label {
+            position: absolute;
+            top: 18%;
+            left: 2%;
+            z-index: -1;
+            opacity: 0;
+            padding: 0 3px;
+            font-size: 10px;
+            line-height: 1;
+            border-radius: 5px;
+            background-color: var(--bg);
+            transition: all .25s ease;
+            user-select: none;
+        }
+        
+        input {
+            flex-grow: 1;
+            padding: 0.75em 1.25em;
+            height: 100%;
+            border: none;
+            outline: none;
+            background-color: transparent;
+            font-weight: 400;
+            line-height: 1.4;
+            color: var(--color);
+        
+            &::placeholder {
+                font-weight: 400;
+                line-height: 1.4;
+                color:  var(--color);
+                opacity: .5;
+                transition: all .1s ease;
+            }
+        }
+
+        .eyeButton {
+            padding-right: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all .2s ease;
+            cursor: pointer;
+
+            &:hover {
+                opacity: .4;
+            }
+        }
+
+        &:hover {
+            border: 2px solid var(--accent);
+        }
+    
+        .input:focus {
+            &::placeholder {
+                color: transparent;
+            }
+        }
+        .input:focus + .label {
+            top: -20%;
+            z-index: 1;
+            opacity: 1;
+            color:  var(--accent);
+            transition: all .2s ease;
+        }
+    }
+    
+    span.clue {
+        padding-left: 2%;
+        @include responsive_font(12, 10);
+        color: var(--color);
+        opacity: .6;
+    }
+
+    span.error {
+        padding-left: 2%;
+        @include responsive_font(12, 10);
+        color: var(--red);
+        opacity: .6;
+    }
+
+
+    &[data-error=true] div.input {
+        border: 2px solid var(--red);
+    }
+}
