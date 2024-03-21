@@ -1,28 +1,29 @@
-import { useState } from 'react';
+import { useAlertStore } from '../../../../store/useAlertStore';
 import { Alert } from '../../ui/Alert';
 import { Button } from '../../ui/Button';
 import { InfoIcon, CopyIcon  } from '../../ui/svg.module';
-import logo from '../../../../public/logo.svg';
+import logo from '../../../../public/media/logo.svg';
 import cls from './index.module.scss';
 
 
 const Footer = () => {
-    const [showAlert, setShowAlert] = useState(false);
-    const [alertTitle, setAlertTitle] = useState('');
-    const [alertMess, setAlertMess] = useState('');
-
+    const { alertState, setAlertState } = useAlertStore();
 
     const handleCopyTelegram = () => {
-        setAlertMess('Напишите разработчику 💖');
-        setAlertTitle('@Nidatsky');
-        navigator.clipboard.writeText(alertTitle);
-        setShowAlert(true);
+        setAlertState({
+            isShow: true,
+            title: '@NeDatsky',
+            message: 'Напишите разработчику 💖'
+        });
+        navigator.clipboard.writeText(alertState.title);
     }
 
     const handleHowItsWork = () => {
-        setAlertTitle('Как это работает?');
-        setAlertMess('Веб-приложение, разработанно для управления электронными пропусками в бассеин ДГТУ');
-        setShowAlert(true);
+        setAlertState({
+            isShow: true,
+            title: 'Как это работает?',
+            message: 'Веб-приложение, разработанно для управления электронными пропусками через проезды шлакбаума в бассеин ДГТУ'
+        });
     }
 
     return (
@@ -54,10 +55,10 @@ const Footer = () => {
            </div>
 
            <Alert 
-                showAlert={showAlert}
-                setShowAlert={setShowAlert}
-                title={alertTitle}
-                message={alertMess}
+                showAlert={alertState.isShow}
+                setAlertState={setAlertState}
+                title={alertState.title}
+                message={alertState.message}
             />
 
         </footer>

@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { createCardService } from '../../../../api';
+import { useAlertStore } from '../../../../store/useAlertStore';
 import { Title } from '../../ui/Title';
 import { Form } from '../../ui/Form';
 import { Input } from '../../ui/Input';
@@ -9,16 +10,16 @@ import cls from './index.module.scss';
 
 
 const CreateCard = () => {
-    const [cardKey, setCardKey] = useState('');
-    const [visitsNumber, setVisitsNumber] = useState(1);
-    const [lastDate, setLastDate] = useState('');
-    const [fio, setFio] = useState('');
-    const [phoneNumber, setPhoneNumber] = useState('');
-    const [carNumber, setCarNumber] = useState('');
+    const { setAlertState } = useAlertStore();
 
-    const [showAlert, setShowAlert] = useState(false);
-    const [alertTitle, setAlertTitle] = useState('');
-    const [alertMess, setAlertMess] = useState('');
+    const [formData, setFormData] = useState({
+        cardKey: '',
+        visitsNumber: '1',
+        lastDate: '',
+        fio: '',
+        phoneNumber: '',
+        carNumber: ''
+    });
 
     const [isValid, setValid] = useState({
         cardKey: false,
@@ -32,51 +33,68 @@ const CreateCard = () => {
     const [showServerErrorMessage, setShowServerErrorMessage] = useState(true);
 
     useEffect(() => {
-       reset();
-      }, []);
+        reset();
+    }, []);
 
-      const reset = () => {
-        setCardKey('');
-        setVisitsNumber('');
-        setLastDate('');
-        setFio('');
-        setPhoneNumber('');
-        setCarNumber('');
+    const reset = () => {
+        setFormData({
+            cardKey: '',
+            visitsNumber: 1,
+            lastDate: new Date(new Date().setDate(new Date().getDate() + 31)).toLocaleDateString('ru-RU', { day: '2-digit', month: '2-digit', year: 'numeric' }),
+            fio: '',
+            phoneNumber: '',
+            carNumber: ''
+        });
         setValid({
             cardKey: false,
-            visitsNumber: false,
-            lastDate: false,
+            visitsNumber: true,
+            lastDate: true,
+            fio: false,
             phoneNumber: false,
             carNumber: false,
         });
-      };
+    };
 
-      const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
+        const { cardKey, visitsNumber, lastDate, fio, phoneNumber, carNumber } = formData;
+        const dateParts = lastDate.split('.');
+        const formattedDate = `${dateParts[2]}-${dateParts[1]}-${dateParts[0]}`;
+        const unixTimestamp = new Date(formattedDate).getTime() / 1000;
+
         e.preventDefault();
         try {
-            createCardService(cardKey, visitsNumber, lastDate, fio, phoneNumber, carNumber).then(response => {
+            createCardService(cardKey, visitsNumber, unixTimestamp, fio, phoneNumber, carNumber).then(response => {
                 setServerResponse(response._code);
                 if (response.state) {
-                    setShowAlert(true);
-                    setAlertTitle('Пропуск создан!');
-                    setAlertMess(`Пропуск ${cardKey} ${fio && fio} на ${visitsNumber} посещений создан успешно по ${lastDate} включительно`);
+                    setAlertState({
+                        isShow: true,
+                        title: 'Пропуск создан!',
+                        message: `Пропуск ${cardKey} ${fio && fio} на ${visitsNumber} посещений создан успешно по ${lastDate} включительно`
+                    });
                     reset();
                 } else {
-                    setShowAlert(true);
-                    setAlertTitle('Ошибка создания!');
+                    setAlertState({
+                        isShow: true,
+                        title: 'Ошибка создания!',
+                        message: ''
+                    });
                 }
                 setServerResponse(-1);
                 setShowServerErrorMessage(false);
             }).catch(err => {
-                setShowAlert(true);
-                setAlertTitle('Ошибка выполнения запроса!');
-                setAlertMess(err);
+                setAlertState({
+                    isShow: true,
+                    title: 'Ошибка выполнения запроса!',
+                    message: err
+                });
                 console.error(err);
             });
         } catch (err) {
-            setShowAlert(true);
-            setAlertTitle('Системная ошибка');
-            setAlertMess(err);
+            setAlertState({
+                isShow: true,
+                title: 'Системная ошибка',
+                message: err
+            });
             console.error(err);
             reset();
         }
@@ -94,8 +112,8 @@ const CreateCard = () => {
                             placeholder={'Приложите эл. карточку...'}
                             clue='Вводится по средствам считывателя'
                             autoFocus
-                            value={cardKey}
-                            onChange={(value) => setCardKey(value)}
+                            value={formData.cardKey}
+                            onChange={(value) => setFormData(prev => ({ ...prev, cardKey: value }))}
                             isValid={(e) => {
                                 setValid((prev) => ({ ...prev, cardKey: !e }));
                             }}
@@ -105,8 +123,8 @@ const CreateCard = () => {
                             type='amount'
                             placeholder={'Укажите кол-во посещений...'}
                             clue='Целое простое число от 1 до 31'
-                            value={visitsNumber}
-                            onChange={(value) => setVisitsNumber(value)}
+                            value={formData.visitsNumber}
+                            onChange={(value) => setFormData(prev => ({ ...prev, visitsNumber: value }))}
                             isValid={(e) => {
                                 setValid((prev) => ({ ...prev, visitsNumber: !e }));
                             }}
@@ -116,27 +134,30 @@ const CreateCard = () => {
                             type='date'
                             placeholder={'Укажите дату, до которой пропуск действителен...'}
                             clue='Вводится в формате дд.мм.гггг'
-                            value={lastDate}
-                            onChange={(value) => setLastDate(value)}
+                            value={formData.lastDate}
+                            onChange={(value) => setFormData(prev => ({ ...prev, lastDate: value }))}
                             isValid={(e) => {
                                 setValid((prev) => ({ ...prev, lastDate: !e }));
                             }}
                         />
                         <Input
                             id={4}
-                            type='text'
+                            type='words'
                             placeholder={'Укажиет Ф.И.О...'}
                             clue='Вводится через пробел. Не является обязательным'
-                            value={fio}
-                            onChange={(value) => setFio(value)}
+                            value={formData.fio}
+                            onChange={(value) => setFormData(prev => ({ ...prev, fio: value }))}
+                            isValid={(e) => {
+                                setValid((prev) => ({ ...prev, fio: !e }));
+                            }}
                         />
                         <Input
                             id={5}
                             type='phoneNumber'
                             placeholder={'Укажите номер телефона...'}
                             clue='Вводится без кода страны (+ 7 или 8)'
-                            value={phoneNumber}
-                            onChange={(value) => setPhoneNumber(value)}
+                            value={formData.phoneNumber}
+                            onChange={(value) => setFormData(prev => ({ ...prev, phoneNumber: value }))}
                             isValid={(e) => {
                                 setValid((prev) => ({ ...prev, phoneNumber: !e }));
                             }}
@@ -146,8 +167,8 @@ const CreateCard = () => {
                             type='carNumber'
                             placeholder={'Укажите номер автомобиля...'}
                             clue='Вводится только цифры номера'
-                            value={carNumber}
-                            onChange={(value) => setCarNumber(value)}
+                            value={formData.carNumber}
+                            onChange={(value) => setFormData(prev => ({ ...prev, carNumber: value }))}
                             isValid={(e) => {
                                 setValid((prev) => ({ ...prev, carNumber: !e }));
                             }}
@@ -159,7 +180,8 @@ const CreateCard = () => {
                         <Button type={'submit'} disabled={
                             !isValid.cardKey ||
                             !isValid.visitsNumber ||
-                            !isValid.lastDate || 
+                            !isValid.lastDate ||
+                            !isValid.fio ||
                             !isValid.phoneNumber ||
                             !isValid.carNumber
                         }>
@@ -168,13 +190,8 @@ const CreateCard = () => {
                     </Form>
                 </div>
             </div>
-            
-            <Alert 
-                showAlert={showAlert}
-                setShowAlert={setShowAlert}
-                title={alertTitle}
-                message={alertMess}
-            />
+
+            <Alert />
 
         </section>
     );

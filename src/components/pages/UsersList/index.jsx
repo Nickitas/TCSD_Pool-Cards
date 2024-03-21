@@ -16,7 +16,9 @@ const UsersList = () => {
     const [isLoading, setLoading] = useState(true);
 
     const [queryText, setQueryText] = useState('');
-    const [sortedField, setSortedField] = useState('');
+
+    const [sortColumn, setSortColumn] = useState(null);
+    const [sortDirection, setSortDirection] = useState('asc');
 
     const [serverResponse, setServerResponse] = useState(-1);
     const [showServerErrorMessage, setShowServerErrorMessage] = useState(true);
@@ -31,7 +33,7 @@ const UsersList = () => {
                 if (response.state) {
                     setData(response.data.map(e => ({
                         _id: e.id,
-                        date1: e.creationDate,
+                        date1: e.creationDate !== undefined ? e.creationDate : "-",
                         date2: new Date(e.lastDate).toLocaleString('RU'),
                         amount: e.visitsNumber,
                         fio: e.fio,
@@ -59,6 +61,32 @@ const UsersList = () => {
 
     const filteredByDate = queryText.length ? data.filter(e => e.cardKey.includes(queryText)) : data;
 
+    const handleClickSort = (column) => {
+        if (sortColumn === column) {
+            setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc');
+        } else {
+            setSortColumn(column);
+            setSortDirection('asc');
+        }
+    };
+
+    const sortedData = filteredByDate.slice().sort((a, b) => {
+        if (sortColumn) {
+            const aValue = a[sortColumn];
+            const bValue = b[sortColumn];
+    
+            if (typeof aValue === 'string' && typeof bValue === 'string') {
+                return sortDirection === 'asc' ? aValue.localeCompare(bValue) : bValue.localeCompare(aValue);
+            } else if (!isNaN(parseFloat(aValue)) && !isNaN(parseFloat(bValue))) {
+                return sortDirection === 'asc' ? parseFloat(aValue) - parseFloat(bValue) : parseFloat(bValue) - parseFloat(aValue);
+            } else {
+                return sortDirection === 'asc' ? String(aValue).localeCompare(String(bValue)) : String(bValue).localeCompare(String(aValue));
+            }
+        }
+    
+        return 0;
+    });
+
     const handleEdit = (obj) => {
         setOpenEditModal(true);
         setItemData(obj);
@@ -68,6 +96,7 @@ const UsersList = () => {
         setOpenDeliteConfirmModal(true);
         setItemData(obj);
     }
+
 
     return (
         <section className={cls.usersList}>
@@ -87,28 +116,28 @@ const UsersList = () => {
                                 <TableHead>
                                     <TableRow>
                                         <TableHeadCell>№</TableHeadCell>
-                                        <TableHeadCell onClick={() => setSortedField('date1')}>
+                                        <TableHeadCell onClick={() => handleClickSort('date1')}>
                                             Дата создания
                                         </TableHeadCell>
-                                        <TableHeadCell onClick={() => setSortedField('date2')}>
+                                        <TableHeadCell onClick={() => handleClickSort('date2')}>
                                             Крайнее посещение
                                         </TableHeadCell>
-                                        <TableHeadCell onClick={() => setSortedField('amount')}>
+                                        <TableHeadCell onClick={() => handleClickSort('amount')}>
                                             Кол-во посещений
                                         </TableHeadCell>
-                                        <TableHeadCell onClick={() => setSortedField('fio')}>
+                                        <TableHeadCell onClick={() => handleClickSort('fio')}>
                                             Ф.И.О.
                                         </TableHeadCell>
-                                        <TableHeadCell onClick={() => setSortedField('cardKey')}>
+                                        <TableHeadCell onClick={() => handleClickSort('cardKey')}>
                                             Пропуск
                                         </TableHeadCell>
-                                        <TableHeadCell onClick={() => setSortedField('status')}>
+                                        <TableHeadCell onClick={() => handleClickSort('status')}>
                                             Статус
                                         </TableHeadCell>
-                                        <TableHeadCell onClick={() => setSortedField('phoneNumber')}>
+                                        <TableHeadCell onClick={() => handleClickSort('phoneNumber')}>
                                             Номер телефона
                                         </TableHeadCell>
-                                        <TableHeadCell onClick={() => setSortedField('carNumber')}>
+                                        <TableHeadCell onClick={() => handleClickSort('carNumber')}>
                                             Номерной знак
                                         </TableHeadCell>
                                         <TableHeadCell>Редактировать</TableHeadCell>
@@ -116,8 +145,8 @@ const UsersList = () => {
                                     </TableRow>
                                 </TableHead>
                                 <TableBody>
-                                    {filteredByDate.length ? (
-                                        filteredByDate.map((row, index) => (
+                                    {sortedData.length ? (
+                                        sortedData.map((row, index) => (
                                             <TableRow key={index}>
                                                 <TableBodyCell>
                                                     <b data-active={row.status}>

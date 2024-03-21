@@ -1,28 +1,34 @@
 import { useEffect } from 'react';
+import { useAlertStore } from '../../../../store/useAlertStore';
 import { LightningIcon, CloseIcon } from '../svg.module';
 import cls from './index.module.scss';
 
 
-const Alert = ({ showAlert, setShowAlert, title, message }) => {
+const Alert = () => {
+    const { alertState, setAlertState } = useAlertStore();
 
     useEffect(() => {
         setTimeout(() => {
-            setShowAlert(false)
+            setAlertState({ isShow: false, title: '', message: '' });
         }, 4_000);
-    }, [showAlert]);
+    }, [alertState.isShow]);
 
     const handleCloseAlert = () => {
-        setShowAlert(false);
+        setAlertState({
+            isShow: false,
+            title: '',
+            message: ''
+        });
     }
 
     return (
-        <div className={`${cls.alert} ${showAlert ? cls.animation : ''}`}>
+        <div className={`${cls.alert} ${alertState.isShow ? cls.animation : ''}`}>
             <div className={cls.icon}>
                 <LightningIcon/>
             </div>
             <div className={cls.message}>
-                <h5>{ title }</h5>
-                <p>{ message }</p>
+                <h5>{ alertState.title }</h5>
+                <p>{ alertState.message }</p>
             </div>
             <div className={cls.close} onClick={handleCloseAlert}>
                 <CloseIcon/>
