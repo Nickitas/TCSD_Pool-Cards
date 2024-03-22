@@ -75,9 +75,10 @@ const CreateCard = () => {
                 } else {
                     setAlertState({
                         isShow: true,
-                        title: 'Ошибка создания!',
-                        message: ''
+                        title: `Пропуск не зарегистрирован в системе СКУД ДГТУ, но создан успешно!`,
+                        message: `Пропуск ${cardKey} ${fio && fio} на ${visitsNumber} посещений создан успешно по ${lastDate} включительно`
                     });
+                    reset();
                 }
                 setServerResponse(-1);
                 setShowServerErrorMessage(false);
@@ -92,7 +93,7 @@ const CreateCard = () => {
         } catch (err) {
             setAlertState({
                 isShow: true,
-                title: 'Системная ошибка',
+                title: 'Системная ошибка создания',
                 message: err
             });
             console.error(err);
@@ -142,9 +143,9 @@ const CreateCard = () => {
                         />
                         <Input
                             id={4}
-                            type='words'
+                            type='fio'
                             placeholder={'Укажиет Ф.И.О...'}
-                            clue='Вводится через пробел. Не является обязательным'
+                            clue='Вводится через пробел'
                             value={formData.fio}
                             onChange={(value) => setFormData(prev => ({ ...prev, fio: value }))}
                             isValid={(e) => {
@@ -166,7 +167,7 @@ const CreateCard = () => {
                             id={6}
                             type='carNumber'
                             placeholder={'Укажите номер автомобиля...'}
-                            clue='Вводится только цифры номера'
+                            clue='Вводится в произвольном формате'
                             value={formData.carNumber}
                             onChange={(value) => setFormData(prev => ({ ...prev, carNumber: value }))}
                             isValid={(e) => {

@@ -1,6 +1,7 @@
 import { validationDefault } from './validationDefault';
 import { validationPhone } from './validationPhone';
 import { validationEmail } from './validationEmail';
+import { validationFio } from './validationFio';
 import { validationPassword } from './validationPassword';
 import { validationDate } from './validationDate';
 import { validationCardNumber } from './validationCardNumber';
@@ -12,6 +13,7 @@ export {
     validationDefault,
     validationPhone,
     validationEmail,
+    validationFio,
     validationPassword,
     validationDate,
     validationCardNumber,

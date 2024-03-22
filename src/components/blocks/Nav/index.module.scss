@@ -63,6 +63,7 @@
 
         & h6 {
             @include responsive_font(14, 12);
+            font-family: "Nunito-Bold";
             color: var(--color);
         }
     }

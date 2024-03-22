@@ -42,14 +42,16 @@
 .message {
     margin: 0 15px;
     h5 {
+        margin-bottom: 1rem;
         font-weight: 600;
         @include responsive-font(20, 18);
-        line-height: 1.5;
+        line-height: 1.2;
     }
     p {
         font-weight: 400;
         @include responsive-font(16, 12);
-        line-height: 1.2;
+        line-height: 1.1;
+        opacity: .8;
     }
 }
 

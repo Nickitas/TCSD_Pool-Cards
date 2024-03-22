@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { getCardsListService } from '../../../../api';
+import { parseUnixTsToRuLocale } from '../../../utils/functions'; 
 import { Title } from '../../ui/Title';
 import { Table, TableHead, TableBody, TableRow, TableHeadCell, TableBodyCell, EmptyCell } from '../../ui/Table';
 import { EditModal } from '../../ui/PopUps/EditModal';
@@ -33,8 +34,8 @@ const UsersList = () => {
                 if (response.state) {
                     setData(response.data.map(e => ({
                         _id: e.id,
-                        date1: e.creationDate !== undefined ? e.creationDate : "-",
-                        date2: new Date(e.lastDate).toLocaleString('RU'),
+                        date1: e.creationDate !== undefined ? parseUnixTsToRuLocale(e.creationDate) : "-",
+                        date2: parseUnixTsToRuLocale(e.lastDate),
                         amount: e.visitsNumber,
                         fio: e.fio,
                         cardKey: e.cardKey,

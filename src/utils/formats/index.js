@@ -3,6 +3,7 @@ import { formatCardNumber } from "./formatCardNumber";
 import { formatCarNumber } from "./formatCarNumber";
 import { formatDateNumber } from './formatDateNumber';
 import { formatPhoneNumber } from "./formatPhoneNumber";
+import { foramtFio } from "./formatFio";
 
 export {
     formatAmount,
@@ -10,4 +11,5 @@ export {
     formatCarNumber,
     formatDateNumber,
     formatPhoneNumber,
+    foramtFio,
 };

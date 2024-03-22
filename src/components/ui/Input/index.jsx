@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import {
+    foramtFio,
     formatPhoneNumber,
     formatCardNumber,
     formatCarNumber,
@@ -9,6 +10,7 @@ import {
 import {
     validationPhone,
     validationEmail,
+    validationFio,
     validationPassword,
     validationDate,
     validationWords,
@@ -47,6 +49,11 @@ const Input = ({
     const formatDefault = (text) => text;
 
     const typeInput = {
+        fio: {
+            type: 'text',
+            format: foramtFio,
+            valid: validationFio,
+        },
         phoneNumber: {
             type: "phone",
             format: formatPhoneNumber,

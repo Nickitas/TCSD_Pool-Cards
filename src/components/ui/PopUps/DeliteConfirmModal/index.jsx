@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { deliteCardService } from '../../../../../api';
+import { useAlertStore } from '../../../../../store/useAlertStore';
 import { ModalWindow, ModalHeader, ModalContent } from "../../ModalWindow";
 import { Form } from '../../Form';
 import { Input } from '../../Input';
@@ -12,14 +13,12 @@ const DeliteConfirmModal = ({
     item,
     setVisible
 }) => {
+    const { setAlertState } = useAlertStore();
+
     const [confirm, setConfirm] = useState('');
     const [isValid, setValid] = useState({
         confirm: false,
     });
-
-    const [showAlert, setShowAlert] = useState(false);
-    const [alertTitle, setAlertTitle] = useState('');
-    const [alertMess, setAlertMess] = useState('');
 
     const [serverResponse, setServerResponse] = useState(-1);
     const [showServerErrorMessage, setShowServerErrorMessage] = useState(true);
@@ -37,29 +36,37 @@ const DeliteConfirmModal = ({
             deliteCardService(item.id).then(response => {
                 setServerResponse(response._code);
                 if (response.state) {
-                    setShowAlert(true);
-                    setAlertTitle('Пропуск удален!');
-                    setAlertMess(`Пропуск ${item.cardKey} ${item.fio && item.fio} удален успешно`);
+                    setAlertState({
+                        isShow: true,
+                        title: 'Пропуск удален!',
+                        message: `Пропуск ${item.cardKey} ${item.fio && item.fio} удален успешно`
+                    });
                     reset();
                 } else {
-                    setShowAlert(true);
-                    setAlertTitle('Ошибка удаления!');
-                    setAlertMess(err);
+                    setAlertState({
+                        isShow: true,
+                        title: 'Ошибка удаления!',
+                        message: err
+                    });
                 }
                 setServerResponse(-1);
                 setShowServerErrorMessage(false);
 
             }).catch(err => {
-                setShowAlert(true);
-                setAlertTitle('Ошибка выполнения запроса!');
-                setAlertMess(err);
+                setAlertState({
+                    isShow: true,
+                    title: 'Ошибка выполнения запроса!',
+                    message: err
+                });
                 console.error(err);
             });
 
         } catch (err) {
-            setShowAlert(true);
-            setAlertTitle('Системная ошибка');
-            setAlertMess(err);
+            setAlertState({
+                isShow: true,
+                title: 'Системная ошибка удаления',
+                message: err
+            });
             console.error(err);
             reset();
         }
@@ -102,12 +109,7 @@ const DeliteConfirmModal = ({
                 </ModalContent>
             </ModalWindow>
 
-            <Alert 
-                showAlert={showAlert}
-                setShowAlert={setShowAlert}
-                title={alertTitle}
-                message={alertMess}
-            />
+            <Alert />
         </>
     );
 

@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { editCardService } from '../../../../../api';
+import { useAlertStore } from '../../../../../store/useAlertStore';
 import { ModalWindow, ModalHeader, ModalContent } from "../../ModalWindow";
 import { Form } from '../../Form';
 import { Input } from "../../Input";
@@ -12,74 +13,91 @@ const EditModal = ({
     item,
     setVisible
 }) => {
-    const [cardKey, setCardKey] = useState(item.cardKey);
-    const [visitsNumber, setVisitsNumber] = useState(item.amount);
-    const [lastDate, setLastDate] = useState(item.date2);
-    const [fio, setFio] = useState(item.fio);
-    const [phoneNumber, setPhoneNumber] = useState(item.phoneNumber);
-    const [carNumber, setCarNumber] = useState(item.carNumber);
+    const { setAlertState } = useAlertStore();
 
-    const [isValid, setValid] = useState({
-        cardKey: false,
-        visitsNumber: false,
-        lastDate: false,
-        phoneNumber: false,
-        carNumber: false,
+    const [formData, setFormData] = useState({
+        cardKey: item.cardKey,
+        visitsNumber: item.amount,
+        lastDate: item.date2,
+        fio: item.fio,
+        phoneNumber: item.phoneNumber,
+        carNumber: item.carNumber,
     });
 
-    const [showAlert, setShowAlert] = useState(false);
-    const [alertTitle, setAlertTitle] = useState('');
-    const [alertMess, setAlertMess] = useState('');
+    const [isValid, setValid] = useState({
+        cardKey: true,
+        visitsNumber: true,
+        lastDate: true,
+        fio: true,
+        phoneNumber: true,
+        carNumber: true,
+    });
 
     const [serverResponse, setServerResponse] = useState(-1);
     const [showServerErrorMessage, setShowServerErrorMessage] = useState(true);
 
     const reset = () => {
-        setCardKey('');
-        setVisitsNumber('');
-        setLastDate('');
-        setFio('');
-        setPhoneNumber('');
-        setCarNumber('');
+       setFormData({
+            cardKey: item.cardKey,
+            visitsNumber: item.amount,
+            lastDate: item.date2,
+            fio: item.fio,
+            phoneNumber: item.phoneNumber,
+            carNumber: item.carNumber,
+       })
         setValid({
-            cardKey: false,
-            visitsNumber: false,
-            lastDate: false,
-            phoneNumber: false,
-            carNumber: false,
+            cardKey: true,
+            visitsNumber: true,
+            lastDate: true,
+            fio: true,
+            phoneNumber: true,
+            carNumber: true,
         });
     };
 
     const handleSubmit = (e) => {
+        const { cardKey, visitsNumber, lastDate, fio, phoneNumber, carNumber } = formData;
+        const dateParts = lastDate.split('.');
+        const formattedDate = `${dateParts[2]}-${dateParts[1]}-${dateParts[0]}`;
+        const unixTimestamp = new Date(formattedDate).getTime() / 1000;
+
         e.preventDefault();
         try {
-            editCardService(cardKey, visitsNumber, lastDate, fio, phoneNumber, carNumber).then(response => {
+            editCardService(cardKey, visitsNumber, unixTimestamp, fio, phoneNumber, carNumber).then(response => {
                 setServerResponse(response._code);
                 if (response.state) {
-                    setShowAlert(true);
-                    setAlertTitle('Пропуск изменен!');
-                    setAlertMess(`Пропуск ${item.cardKey} ${item.fio && item.fio} на ${item.visitsNumber} посещений изменен успешно`);
                     setVisible(false);
+                    setAlertState({
+                        isShow: true,
+                        title: 'Пропуск изменен!',
+                        message: `Пропуск ${item.cardKey} ${item.fio && item.fio} на ${item.visitsNumber} посещений изменен успешно`
+                    });
                     reset();
                 } else {
-                    setShowAlert(true);
-                    setAlertTitle('Ошибка изменения!');
-                    setAlertMess(err);
+                    setAlertState({
+                        isShow: true,
+                        title: 'Ошибка изменения!',
+                        message: err,
+                    });
                 }
                 setServerResponse(-1);
                 setShowServerErrorMessage(false);
 
             }).catch(err => {
-                setShowAlert(true);
-                setAlertTitle('Ошибка выполнения запроса!');
-                setAlertMess(err);
+                setAlertState({
+                    isShow: true,
+                    title: 'Ошибка выполнения запроса!',
+                    message: err
+                });
                 console.error(err);
             });
 
         } catch (err) {
-            setShowAlert(true);
-            setAlertTitle('Системная ошибка');
-            setAlertMess(err);
+            setAlertState({
+                isShow: true,
+                title: 'Системная ошибка при изменении данных',
+                message: err
+            });
             console.error(err);
             reset();
         }
@@ -100,8 +118,8 @@ const EditModal = ({
                                 placeholder={'Приложите эл. карточку...'}
                                 clue='Вводится по средствам считывателя'
                                 autoFocus
-                                value={cardKey}
-                                onChange={(value) => setCardKey(value)}
+                                value={formData.cardKey}
+                                onChange={(value) => setFormData(prev => ({ ...prev, cardKey: value }))}
                                 isValid={(e) => {
                                     setValid((prev) => ({ ...prev, cardKey: !e }));
                                 }}
@@ -111,8 +129,8 @@ const EditModal = ({
                                 type='amount'
                                 placeholder={'Укажите кол-во посещений...'}
                                 clue='Целое простое число от 1 до 31'
-                                value={visitsNumber}
-                                onChange={(value) => setVisitsNumber(value)}
+                                value={formData.visitsNumber}
+                                onChange={(value) => setFormData(prev => ({ ...prev, amount: value }))}
                                 isValid={(e) => {
                                     setValid((prev) => ({ ...prev, visitsNumber: !e }));
                                 }}
@@ -122,8 +140,8 @@ const EditModal = ({
                                 type='date'
                                 placeholder={'Укажите дату, до которой пропуск действителен...'}
                                 clue='Вводится в формате дд.мм.гггг'
-                                value={lastDate}
-                                onChange={(value) => setLastDate(value)}
+                                value={formData.lastDate}
+                                onChange={(value) => setFormData(prev => ({ ...prev, lastDate: value }))}
                                 isValid={(e) => {
                                     setValid((prev) => ({ ...prev, lastDate: !e }));
                                 }}
@@ -132,17 +150,17 @@ const EditModal = ({
                                 id={4}
                                 type='text'
                                 placeholder={'Укажиет Ф.И.О...'}
-                                clue='Вводится через пробел. Не является обязательным'
-                                value={fio}
-                                onChange={(value) => setFio(value)}
+                                clue='Вводится через пробел'
+                                value={formData.fio}
+                                onChange={(value) => setFormData(prev => ({ ...prev, fio: value }))}
                             />
                             <Input
                                 id={5}
                                 type='phoneNumber'
                                 placeholder={'Укажите номер телефона...'}
                                 clue='Вводится без кода страны (+ 7 или 8)'
-                                value={phoneNumber}
-                                onChange={(value) => setPhoneNumber(value)}
+                                value={formData.phoneNumber}
+                                onChange={(value) => setFormData(prev => ({ ...prev, phoneNumber: value }))}
                                 isValid={(e) => {
                                     setValid((prev) => ({ ...prev, phoneNumber: !e }));
                                 }}
@@ -151,9 +169,9 @@ const EditModal = ({
                                 id={6}
                                 type='carNumber'
                                 placeholder={'Укажите номер автомобиля...'}
-                                clue='Вводится только цифры номера'
-                                value={carNumber}
-                                onChange={(value) => setCarNumber(value)}
+                                clue='Вводится в произвольном формате'
+                                value={formData.carNumber}
+                                onChange={(value) => setFormData(prev => ({ ...prev, carNumber: value }))}
                                 isValid={(e) => {
                                     setValid((prev) => ({ ...prev, carNumber: !e }));
                                 }}
@@ -166,22 +184,18 @@ const EditModal = ({
                                 !isValid.cardKey ||
                                 !isValid.visitsNumber ||
                                 !isValid.lastDate ||
+                                !isValid.fio ||
                                 !isValid.phoneNumber ||
                                 !isValid.carNumber
                             }>
-                                Изменить
+                                Принять изменения
                             </Button>
                         </Form>
                     </div>
                 </ModalContent>
             </ModalWindow>
 
-            <Alert
-                showAlert={showAlert}
-                setShowAlert={setShowAlert}
-                title={alertTitle}
-                message={alertMess}
-            />
+            <Alert />
         </>
     );
 
