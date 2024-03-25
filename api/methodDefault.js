@@ -20,9 +20,10 @@ export const methodDefault = async (path, { body, method = 'GET' }) => {
     return {
       state: data.state,
       data: data.data,
+      body: data.body
     };
   } catch (error) {
-    console.error(error);
-    return { state: false, data: [] };
+    console.error(`methodDefault Error >>> ${error}`);
+    return { state: false, data: [], body: '' };
   }
 };

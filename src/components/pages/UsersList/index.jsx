@@ -1,15 +1,15 @@
 import { useState, useEffect } from 'react';
 import { getCardsListService } from '../../../../api';
-import { parseUnixTsToRuLocale } from '../../../utils/functions'; 
+import { parseUnixTsToRuLocale } from '../../../utils/functions';
 import { Title } from '../../ui/Title';
 import { Table, TableHead, TableBody, TableRow, TableHeadCell, TableBodyCell, EmptyCell } from '../../ui/Table';
-import { EditModal } from '../../ui/PopUps/EditModal';
-import { DeliteConfirmModal } from '../../ui/PopUps/DeliteConfirmModal';
+import { EditModal } from './PopUps/EditModal';
+import { DeleteConfirmModal } from './PopUps/DeliteConfirmModal';
 import { SearchInput } from '../../ui/SearchInput';
 import { Loader } from '../../ui/Loader';
-
 import { EditIcon, TrashIcon } from '../../ui/svg.module';
 import cls from './index.module.scss'
+
 
 const UsersList = () => {
     const [data, setData] = useState([]);
@@ -25,40 +25,58 @@ const UsersList = () => {
     const [showServerErrorMessage, setShowServerErrorMessage] = useState(true);
 
     const [isOpenEditModal, setOpenEditModal] = useState(false);
-    const [isOpenDeliteConfirmModal, setOpenDeliteConfirmModal] = useState(false);
+    const [isOpenDeleteConfirmModal, setOpenDeleteConfirmModal] = useState(false);
 
-    useEffect(() => {
+    let timeout;
+
+    const fetchData = async () => {
         try {
-            getCardsListService().then(response => {
-                setServerResponse(response._code);
-                if (response.state) {
-                    setData(response.data.map(e => ({
-                        _id: e.id,
-                        date1: e.creationDate !== undefined ? parseUnixTsToRuLocale(e.creationDate) : "-",
-                        date2: parseUnixTsToRuLocale(e.lastDate),
-                        amount: e.visitsNumber,
-                        fio: e.fio,
-                        cardKey: e.cardKey,
-                        status: e.status,
-                        phoneNumber: e.phoneNumber,
-                        carNumber: e.carNumber
-                    })));
-                    setLoading(false);
-                } else {
-                    setLoading(true);
-                    console.error('Данные не были получены');
-                }
-                setServerResponse(-1);
-                setShowServerErrorMessage(false);
-            }).catch(err => {
+            const response = await getCardsListService();
+            setServerResponse(response._code);
+            if (response.state) {
+                setData(response.data.map(e => ({
+                    _id: e._id,
+                    date1: e.createDate !== undefined ? parseUnixTsToRuLocale(e.createDate) : "-",
+                    date2: parseUnixTsToRuLocale(e.lastDate),
+                    amount: e.visitsNumber,
+                    fio: e.fio,
+                    cardKey: e.cardKey,
+                    status: e.status,
+                    phoneNumber: e.phoneNumber,
+                    carNumber: e.carNumber
+                })));
+                setLoading(false);
+            } else {
                 setLoading(true);
-                console.error(err);
-            });
+                console.error('Данные не были получены');
+            }
+            setServerResponse(-1);
+            setShowServerErrorMessage(false);
         } catch (err) {
             setLoading(true);
             console.error(err);
         }
+    };
+
+    useEffect(() => {
+        fetchData();
+
+        return () => {
+            clearTimeout(timeout);
+        };
     }, []);
+
+    useEffect(() => {
+        if (timeout) {
+            clearTimeout(timeout);
+        }
+
+        timeout = setTimeout(() => {
+            fetchData();
+        }, 5000);
+
+        return () => clearTimeout(timeout);
+    }, [data]);
 
     const filteredByDate = queryText.length ? data.filter(e => e.cardKey.includes(queryText)) : data;
 
@@ -75,7 +93,7 @@ const UsersList = () => {
         if (sortColumn) {
             const aValue = a[sortColumn];
             const bValue = b[sortColumn];
-    
+
             if (typeof aValue === 'string' && typeof bValue === 'string') {
                 return sortDirection === 'asc' ? aValue.localeCompare(bValue) : bValue.localeCompare(aValue);
             } else if (!isNaN(parseFloat(aValue)) && !isNaN(parseFloat(bValue))) {
@@ -84,7 +102,7 @@ const UsersList = () => {
                 return sortDirection === 'asc' ? String(aValue).localeCompare(String(bValue)) : String(bValue).localeCompare(String(aValue));
             }
         }
-    
+
         return 0;
     });
 
@@ -94,7 +112,7 @@ const UsersList = () => {
     }
 
     const handleDelete = (obj) => {
-        setOpenDeliteConfirmModal(true);
+        setOpenDeleteConfirmModal(true);
         setItemData(obj);
     }
 
@@ -117,31 +135,31 @@ const UsersList = () => {
                                 <TableHead>
                                     <TableRow>
                                         <TableHeadCell>№</TableHeadCell>
-                                        <TableHeadCell onClick={() => handleClickSort('date1')}>
+                                        <TableHeadCell sortabl onClick={() => handleClickSort('date1')}>
                                             Дата создания
                                         </TableHeadCell>
-                                        <TableHeadCell onClick={() => handleClickSort('date2')}>
+                                        <TableHeadCell sortabl onClick={() => handleClickSort('date2')}>
                                             Крайнее посещение
                                         </TableHeadCell>
-                                        <TableHeadCell onClick={() => handleClickSort('amount')}>
+                                        <TableHeadCell sortabl onClick={() => handleClickSort('amount')}>
                                             Кол-во посещений
                                         </TableHeadCell>
-                                        <TableHeadCell onClick={() => handleClickSort('fio')}>
+                                        <TableHeadCell sortabl onClick={() => handleClickSort('fio')}>
                                             Ф.И.О.
                                         </TableHeadCell>
-                                        <TableHeadCell onClick={() => handleClickSort('cardKey')}>
+                                        <TableHeadCell sortabl onClick={() => handleClickSort('cardKey')}>
                                             Пропуск
                                         </TableHeadCell>
-                                        <TableHeadCell onClick={() => handleClickSort('status')}>
+                                        <TableHeadCell sortabl onClick={() => handleClickSort('status')}>
                                             Статус
                                         </TableHeadCell>
-                                        <TableHeadCell onClick={() => handleClickSort('phoneNumber')}>
+                                        <TableHeadCell sortabl onClick={() => handleClickSort('phoneNumber')}>
                                             Номер телефона
                                         </TableHeadCell>
-                                        <TableHeadCell onClick={() => handleClickSort('carNumber')}>
+                                        <TableHeadCell sortabl onClick={() => handleClickSort('carNumber')}>
                                             Номерной знак
                                         </TableHeadCell>
-                                        <TableHeadCell>Редактировать</TableHeadCell>
+                                        <TableHeadCell>Править</TableHeadCell>
                                         <TableHeadCell>Удалить</TableHeadCell>
                                     </TableRow>
                                 </TableHead>
@@ -181,7 +199,7 @@ const UsersList = () => {
                                                 <TableBodyCell data-green onClick={() => handleEdit(row)}>
                                                     <EditIcon />
                                                 </TableBodyCell>
-                                                <TableBodyCell data-red onClick={() => handleDelete(row._id)}>
+                                                <TableBodyCell data-red onClick={() => handleDelete(row)}>
                                                     <TrashIcon />
                                                 </TableBodyCell>
                                             </TableRow>
@@ -204,10 +222,10 @@ const UsersList = () => {
                 />
             )}
 
-            {isOpenDeliteConfirmModal && (
-                <DeliteConfirmModal
+            {isOpenDeleteConfirmModal && (
+                <DeleteConfirmModal
                     item={itemData}
-                    setVisible={setOpenDeliteConfirmModal}
+                    setVisible={setOpenDeleteConfirmModal}
                 />
             )}
 

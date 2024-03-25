@@ -1,11 +1,12 @@
 import { useState } from 'react';
-import { editCardService } from '../../../../../api';
-import { useAlertStore } from '../../../../../store/useAlertStore';
-import { ModalWindow, ModalHeader, ModalContent } from "../../ModalWindow";
-import { Form } from '../../Form';
-import { Input } from "../../Input";
-import { Button } from "../../Button";
-import { Alert } from '../../Alert';
+import { editCardService } from '../../../../../../api';
+import { useAlertStore } from '../../../../../../store/useAlertStore';
+import { parseDateRuLocaleToUnixTs } from '../../../../../utils/functions';
+import { ModalWindow, ModalHeader, ModalContent } from '../../../../ui/ModalWindow';
+import { Form } from '../../../../ui/Form';
+import { Input } from '../../../../ui/Input';
+import { Button } from '../../../../ui/Button';
+import { Alert } from '../../../../ui/Alert';
 import cls from './index.module.scss';
 
 
@@ -57,13 +58,17 @@ const EditModal = ({
 
     const handleSubmit = (e) => {
         const { cardKey, visitsNumber, lastDate, fio, phoneNumber, carNumber } = formData;
-        const dateParts = lastDate.split('.');
-        const formattedDate = `${dateParts[2]}-${dateParts[1]}-${dateParts[0]}`;
-        const unixTimestamp = new Date(formattedDate).getTime() / 1000;
 
         e.preventDefault();
         try {
-            editCardService(cardKey, visitsNumber, unixTimestamp, fio, phoneNumber, carNumber).then(response => {
+            editCardService(item._id, { 
+                cardKey: cardKey,
+                visitsNumber: Number(visitsNumber),
+                lastDate: parseDateRuLocaleToUnixTs(lastDate),
+                fio: fio,
+                phoneNumber: phoneNumber, 
+                carNumber: carNumber
+             }).then(response => {
                 setServerResponse(response._code);
                 if (response.state) {
                     setVisible(false);
@@ -73,11 +78,12 @@ const EditModal = ({
                         message: `Пропуск ${item.cardKey} ${item.fio && item.fio} на ${item.visitsNumber} посещений изменен успешно`
                     });
                     reset();
+                    setVisible(false);
                 } else {
                     setAlertState({
                         isShow: true,
                         title: 'Ошибка изменения!',
-                        message: err,
+                        message: response.body,
                     });
                 }
                 setServerResponse(-1);

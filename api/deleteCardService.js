@@ -1,6 +1,6 @@
 import { methodDefault } from './methodDefault';
 
-export const deliteCardService = async (id) => methodDefault('/card/delite', {
+export const deleteCardService = async (id) => methodDefault('/delete', {
     method: 'POST',
     body: JSON.stringify({ id })
 });

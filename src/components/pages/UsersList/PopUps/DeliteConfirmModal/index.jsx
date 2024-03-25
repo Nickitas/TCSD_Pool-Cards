@@ -1,15 +1,15 @@
 import { useState } from 'react';
-import { deliteCardService } from '../../../../../api';
-import { useAlertStore } from '../../../../../store/useAlertStore';
-import { ModalWindow, ModalHeader, ModalContent } from "../../ModalWindow";
-import { Form } from '../../Form';
-import { Input } from '../../Input';
-import { Button } from "../../Button";
-import { Alert } from '../../Alert';
+import { deleteCardService } from '../../../../../../api';
+import { useAlertStore } from '../../../../../../store/useAlertStore';
+import { ModalWindow, ModalHeader, ModalContent } from '../../../../ui/ModalWindow';
+import { Form } from '../../../../ui/Form';
+import { Input } from '../../../../ui/Input';
+import { Button } from '../../../../ui/Button';
+import { Alert } from '../../../../ui/Alert';
 import cls from './index.module.scss';
 
 
-const DeliteConfirmModal = ({
+const DeleteConfirmModal = ({
     item,
     setVisible
 }) => {
@@ -33,7 +33,7 @@ const DeliteConfirmModal = ({
     const handleSubmit = (e) => {
         e.preventDefault();
         try {
-            deliteCardService(item.id).then(response => {
+            deleteCardService(item._id).then(response => {
                 setServerResponse(response._code);
                 if (response.state) {
                     setAlertState({
@@ -42,11 +42,12 @@ const DeliteConfirmModal = ({
                         message: `Пропуск ${item.cardKey} ${item.fio && item.fio} удален успешно`
                     });
                     reset();
+                    setVisible(false);
                 } else {
                     setAlertState({
                         isShow: true,
                         title: 'Ошибка удаления!',
-                        message: err
+                        message: 'Повторите действия повторно'
                     });
                 }
                 setServerResponse(-1);
@@ -72,14 +73,14 @@ const DeliteConfirmModal = ({
         }
     }
 
-    const deliteConfirmModal = (
+    const deleteConfirmModal = (
         <>
             <ModalWindow setVisible={() => setVisible(false)}>
                 <ModalHeader setVisible={() => setVisible(false)}>
                     Удаление
                 </ModalHeader>
                 <ModalContent>
-                    <div className={cls.deliteConfirmModal}>
+                    <div className={cls.deleteConfirmModal}>
                         <Form onSubmit={handleSubmit}>
                             <p>
                                 Для подтверждения удаления пропуска пропишите в текстовое поле слово "да" и нажмите на кнопку "Подтверждаю".
@@ -113,7 +114,7 @@ const DeliteConfirmModal = ({
         </>
     );
 
-    return deliteConfirmModal;
+    return deleteConfirmModal;
 };
 
-export { DeliteConfirmModal };
+export { DeleteConfirmModal };

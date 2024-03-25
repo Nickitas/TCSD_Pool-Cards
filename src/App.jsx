@@ -24,7 +24,10 @@ const App = () => {
               <Route path="statistics" element={<Statistics />} />
             </>
           ) : (
-            <Route path="auth" element={<Auth />} />
+            <>
+              <Route path="auth" element={<Auth />} />
+              <Route path="/" element={<h1>Вы не прошли авторизацию</h1>} />
+            </>
           )}
           <Route path="*" element={<Navigate to="/" />} />
         </Route>

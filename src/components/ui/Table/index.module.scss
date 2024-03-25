@@ -51,7 +51,10 @@
 
 .theadCell {
     padding: 10px;
-    cursor: pointer;
+
+    &[data-sortabl] {
+        cursor: pointer;
+    }
 
     .line {
         margin: 0 auto;
@@ -73,7 +76,6 @@
 
     .icon {
         right: 0;
-        display: flex;
         align-items: center;
         display: none;
 
@@ -86,6 +88,7 @@
         .icon {
             display: flex;
         }
+
         .icon svg {
             transition: all .1s ease-out;
         }
@@ -93,14 +96,6 @@
 
     .icon.iconRot svg {
         transform: rotate(180deg);
-    }
-
-    &:nth-last-child(-n+2) {
-        cursor: auto;
-
-        .icon {
-            display: none;
-        }
     }
 }
 
@@ -145,10 +140,12 @@
             transition: all .3s ease-in;
             color: var(--red);
         }
+
         &:hover {
             svg {
                 color: var(--red-op);
             }
+
             cursor: pointer;
         }
     }
@@ -158,10 +155,12 @@
             transition: all .3s ease-in;
             color: var(--green);
         }
+
         &:hover {
             svg {
                 color: var(--green-op);
             }
+
             cursor: pointer;
         }
     }

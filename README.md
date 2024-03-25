@@ -8,7 +8,7 @@ Card access system for recording travel through the checkpoint barrier and regis
 ### 1. api
     - authServise - сервис для авторизации оператора в системе;
     - createCardServise - сервис для созданеи пропуска в системе;
-    - deliteCardServise - сервис для удаление проуска из системы;
+    - deleteCardService - сервис для удаление проуска из системы;
     - editCardServise - сервис для внесение изменений записи в системе;
     - getCardsListServise - сервис для получене всех записей из базы пользователей системы.
 
@@ -24,7 +24,7 @@ Card access system for recording travel through the checkpoint barrier and regis
 ### 4. src/assets/
 Директория для файлов стилей, шрифтов и медиа контеннат.
 
-### 5. src/components/blocks
+### 5. src/components/wigeets
 Самостоятельные блоки интерфейса.
    - Nav - виджет панели навигации на странице, системных кнопок;
    - Footer - виджет подвала с полезной информацией.
