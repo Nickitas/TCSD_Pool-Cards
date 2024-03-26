@@ -6,7 +6,6 @@ import { Title } from '../../ui/Title';
 import { Form } from '../../ui/Form';
 import { Input } from '../../ui/Input';
 import { Button } from '../../ui/Button';
-import { Alert } from '../../ui/Alert';
 import cls from './index.module.scss';
 
 
@@ -135,14 +134,6 @@ const Auth = () => {
                     </Form>
                 </div>
             </div>
-
-            <Alert
-                showAlert={showAlert}
-                setShowAlert={setShowAlert}
-                title={alertTitle}
-                message={alertMess}
-            />
-
         </section>
     );
 };

@@ -3,6 +3,10 @@
 .footer {
     position: relative;
     padding: 30px 0 10px;
+    background: hsla(0, 0%, 100%, 0);
+    backdrop-filter: blur(30px);
+    -webkit-backdrop-filter: blur(30px);
+    user-select: none;
 
     .row {
         margin: 0 auto;

@@ -6,7 +6,6 @@ import { ModalWindow, ModalHeader, ModalContent } from '../../../../ui/ModalWind
 import { Form } from '../../../../ui/Form';
 import { Input } from '../../../../ui/Input';
 import { Button } from '../../../../ui/Button';
-import { Alert } from '../../../../ui/Alert';
 import cls from './index.module.scss';
 
 
@@ -75,7 +74,7 @@ const EditModal = ({
                     setAlertState({
                         isShow: true,
                         title: 'Пропуск изменен!',
-                        message: `Пропуск ${item.cardKey} ${item.fio && item.fio} на ${item.visitsNumber} посещений изменен успешно`
+                        message: `Пропуск ${cardKey} ${fio && fio} на ${visitsNumber} посещений изменен успешно`
                     });
                     reset();
                     setVisible(false);
@@ -136,7 +135,7 @@ const EditModal = ({
                                 placeholder={'Укажите кол-во посещений...'}
                                 clue='Целое простое число от 1 до 31'
                                 value={formData.visitsNumber}
-                                onChange={(value) => setFormData(prev => ({ ...prev, amount: value }))}
+                                onChange={(value) => setFormData(prev => ({ ...prev, visitsNumber: value }))}
                                 isValid={(e) => {
                                     setValid((prev) => ({ ...prev, visitsNumber: !e }));
                                 }}
@@ -200,8 +199,6 @@ const EditModal = ({
                     </div>
                 </ModalContent>
             </ModalWindow>
-
-            <Alert />
         </>
     );
 

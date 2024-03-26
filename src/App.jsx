@@ -9,6 +9,7 @@ const Auth = lazy(() => import('./components/pages/Auth'));
 const UsersList = lazy(() => import('./components/pages/UsersList'));
 const CreateCard = lazy(() => import('./components/pages/CreateCard'));
 const Statistics = lazy(() => import('./components/pages/Statistics'));
+const Unauthorized = lazy(() => import('./components/pages/Unauthorized'));
 
 const App = () => {
   const { isAuth } = useAuthStore();
@@ -26,7 +27,7 @@ const App = () => {
           ) : (
             <>
               <Route path="auth" element={<Auth />} />
-              <Route path="/" element={<h1>Вы не прошли авторизацию</h1>} />
+              <Route path="/" element={<Unauthorized />} />
             </>
           )}
           <Route path="*" element={<Navigate to="/" />} />

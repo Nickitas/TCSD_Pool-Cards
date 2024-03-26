@@ -1,5 +1,4 @@
 import { useAlertStore } from '../../../../store/useAlertStore';
-import { Alert } from '../../ui/Alert';
 import { Button } from '../../ui/Button';
 import { InfoIcon, CopyIcon  } from '../../ui/svg.module';
 import logo from '../../../../public/media/logo.svg';
@@ -53,14 +52,6 @@ const Footer = () => {
                 
                 </div>
            </div>
-
-           <Alert 
-                showAlert={alertState.isShow}
-                setAlertState={setAlertState}
-                title={alertState.title}
-                message={alertState.message}
-            />
-
         </footer>
     );
 };

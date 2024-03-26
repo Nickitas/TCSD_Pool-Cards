@@ -188,7 +188,9 @@ const UsersList = () => {
                                                     {row.cardKey}
                                                 </TableBodyCell>
                                                 <TableBodyCell>
-                                                    {row.status ? 'Активен' : 'Не активен'}
+                                                    <span className={cls.collored} data-active={`${row.status}`}>
+                                                        {row.status ? 'Активен' : 'Не активен'}
+                                                    </span>
                                                 </TableBodyCell>
                                                 <TableBodyCell>
                                                     {row.phoneNumber}

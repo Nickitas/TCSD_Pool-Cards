@@ -5,7 +5,6 @@ import { ModalWindow, ModalHeader, ModalContent } from '../../../../ui/ModalWind
 import { Form } from '../../../../ui/Form';
 import { Input } from '../../../../ui/Input';
 import { Button } from '../../../../ui/Button';
-import { Alert } from '../../../../ui/Alert';
 import cls from './index.module.scss';
 
 
@@ -109,8 +108,6 @@ const DeleteConfirmModal = ({
                     </div>
                 </ModalContent>
             </ModalWindow>
-
-            <Alert />
         </>
     );
 

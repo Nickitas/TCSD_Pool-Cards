@@ -1,6 +1,5 @@
 @import '../../../assets/mixins/responsive_font.scss';
 
-
 .usersList {
     margin: 0 auto;
     padding: 1rem 0;
@@ -15,6 +14,20 @@
     }
     
     .tableWrapper {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
         
+        .collored {
+            color: var(--color);
+
+            &[data-active="true"] {
+                color: var(--green);
+            }
+            &[data-active="false"] {
+                color: var(--red);
+            }
+        }
     }
 }
